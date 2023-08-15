@@ -1,0 +1,64 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+{% load mytags %}
+{% load custom_filters %}
+<!-- Название у нас будет Product -->
+{% block title %}
+Post details
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
+{% block content %}
+<form action="" method="get">
+    {{ filterset.form.as_p }}
+    <input type="submit" value="Найти" />
+</form>
+
+{% if posts_search %}
+<h1>{{posts_search|length}} POSTS:</h1>
+    <table>
+        {% for post in posts_search %}
+        <tr>
+            <td colspan="2" align="left"> <em>
+            {% for cat in post.category.all %}
+                {{cat}}
+            {% endfor %}:
+            </em></td>
+        </tr>
+        <tr>
+            <td align="left"> <strong> {{ post.time_creation|date:'d.m.Y' }} </strong></td>
+            <td align="left"><a href={%  hrefcreate value=post.pk %}> {{ post.title|censor }} </a></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="left"> <em> {{ post.post|truncatechars:20 }} </em></td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+<h2>Статей и новостей нет!</h2>
+{% endif %}
+
+{# Добавляем пагинацию на страницу #}
+
+   {# Информация о предыдущих страницах #}
+   {% if page_obj.has_previous %}
+       <a href="?{% url_replace page=1 %}">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {# Информация о текущей странице #}
+   {{ page_obj.number }}
+
+   {# Информация о следующих страницах #}
+   {% if page_obj.has_next %}
+       <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+<hr>
+{% endblock content %}

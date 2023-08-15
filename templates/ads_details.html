@@ -1,0 +1,70 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+{% load mytags %}
+
+
+{% block title %}
+Post details
+{% endblock title %}
+
+
+{% block content %}
+<h1><strong>{{ post_details.title|censor }}</strong></h1>
+<br>
+<h4 align="left"><em>{{ post_details.time_creation|date:'d.m.Y' }} - by {{ post_details.author }}</em></h4>
+<hr>
+<p>{{ post_details.post|censor }}</p>
+<hr>
+
+<table>
+{% for cmnts in post_details.comments_set.all %}
+    <tr>
+        <td>{{cmnts.author}} comment:</td>
+        <td align="left">{{cmnts.comment}}</td>
+    </tr>
+{% endfor %}
+</table>
+
+{% if post_details.type == 'A' %}
+    <table>
+        <tr>
+            <td>
+                {% if perms.News.change_post %}
+                <form action="articles/{{ post_details.pk }}/edit/" >
+                    <input type="submit" value="Edit" />
+                </form>
+                {% endif %}
+            </td>
+            <td>
+                {% if perms.News.delete_post %}
+                <form action="articles/{{ post_details.pk }}/delete/" >
+                    <input type="submit" value="Delete" />
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+{% else %}
+    <table>
+        <tr>
+            <td>
+                {% if perms.News.change_post %}
+                <form action="{{ post_details.pk }}/edit/" >
+                    <input type="submit" value="Edit" />
+                </form>
+                {% endif %}
+            </td>
+            <td>
+                {% if perms.News.delete_post %}
+                <form action="{{ post_details.pk }}/delete/" >
+                    <input type="submit" value="Delete" />
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+{% endif %}
+
+{% endblock content %}
