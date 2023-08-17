@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Ads
 from .forms import AdsForm
@@ -29,6 +29,20 @@ class AdsCreate(CreateView):
     # permission_required = ('News.add_post',)
     template_name = 'ads_edit.html'
     context_object_name = 'ads'
+
+    def post(self, request, *args, **kwargs):
+        # form = AdsForm(request.POST)
+        # if not self.request.user.groups.filter(name='virified_email').exists():
+        #     form = ...Form()
+        #     return redirect(to='verify_email')
+        ads = Ads(
+            category=request.POST['category'],
+            title=request.POST['title'],
+            # seller=self.request.user,
+            content=request.POST['content']
+        )
+        ads.save()
+        return redirect(to='ads_list')
 
 
 class AdsDelete(DeleteView):

@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-from os import path
+from os import path, getenv
 from pathlib import Path
-# from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'grappelli',
+    'filebrowser',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,9 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.flatpages',
     'Desk',
+    'tinymce',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.yandex',
 ]
-
-# 'tinymce',
 
 SITE_ID = 1
 
@@ -55,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
 
 ROOT_URLCONF = 'AdsDesk.urls'
@@ -111,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
@@ -131,3 +137,89 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_DIRS = [BASE_DIR / "static"]
+
+STATIC_ROOT = path.join(BASE_DIR, 'collected_static')
+
+#TinyMCE
+# TINYMCE_JS_URL = path.join(BASE_DIR, "static/tinymce/tinymce.min.js")
+TINYMCE_JS_ROOT = path.join(STATIC_ROOT, "tinymce")
+TINYMCE_COMPRESSOR = False
+TINYMCE_FILEBROWSER = True
+TINYMCE_SPELLCHECKER = True
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = path.join(BASE_DIR, 'media')
+PROJECT_DIR = path.dirname(__file__)
+
+# TINYMCE_JS_ROOT = path.join(STATIC_ROOT, "tinymce")
+
+FILEBROWSER_DIRECTORY = ''
+DIRECTORY = ''
+
+TINYMCE_DEFAULT_CONFIG = {
+    "height": "700px",
+    "relative_urls": False,
+    "remove_script_host": False,
+    "convert_urls": True,
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 20,
+    'theme': 'silver',
+    'plugins': '''
+            textcolor save link image media preview codesample contextmenu
+            table code lists fullscreen  insertdatetime  nonbreaking
+            contextmenu directionality searchreplace wordcount visualblocks
+            visualchars code fullscreen autolink lists  charmap print  hr
+            anchor pagebreak
+            ''',
+    'toolbar1': '''
+            bold italic underline | fontselect,
+            fontsizeselect  | forecolor backcolor | alignleft alignright |
+            aligncenter alignjustify | indent outdent | bullist numlist table |
+            | link image media | codesample |
+            ''',
+
+    'contextmenu': 'formats | link image',
+    'menubar': True,
+    'statusbar': True,
+    "language": "ru",
+}
+
+#Added for django-allauth...
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+#перенаправления после аунтификации
+LOGIN_REDIRECT_URL = "/ads" #'verify_email'
+#перенаправления после logout
+LOGOUT_REDIRECT_URL = "/ads"
+
+# ACCOUNT_FORMS = {
+#     'login': 'Desk.forms.CustomLoginForm',
+#     'signup': 'Desk.forms.CustomRegisterForm',
+# }
+
+load_dotenv(find_dotenv())
+
+# Emails
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+
+DEFAULT_FROM_EMAIL = getenv('DEFAULT_FROM_EMAIL')
+
+SERVER_EMAIL = getenv('SERVER_EMAIL')

@@ -2,15 +2,18 @@ from django import forms
 from tinymce.widgets import TinyMCE
 from .models import Ads, Category
 
-cats = Category.objects.all().values('pk', 'name')
-catchoice = []
 
-for i in cats:
-    catchoice.append((i['pk'], i['name']))
+def catchoice():
+    cats = Category.objects.all().values('pk', 'name')
+    choices = []
+
+    for i in cats:
+        choices.append((i['pk'], i['name']))
+    return choices
 
 
 class AdsForm(forms.ModelForm):
-    category = forms.ChoiceField(label='Категория', choices=catchoice)
+    category = forms.ChoiceField(label='Категория', choices=catchoice())
     title = forms.CharField(label='Заголовок')
     content = forms.CharField(label='Детальная информация', widget=TinyMCE())
 

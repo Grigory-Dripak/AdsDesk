@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from tinymce.models import HTMLField
 from django.contrib.auth.models import User
 
@@ -24,6 +25,9 @@ class Ads(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='cat_ads')
     is_closed = models.BooleanField(default=False)
 
+    def get_absolute_url(self):
+        return reverse('ads_detail', args=[str(self.pk)])
+
 
 class Reply(models.Model):
     reply = models.TextField()
@@ -33,10 +37,10 @@ class Reply(models.Model):
     time_creation = models.DateTimeField(auto_now_add=True)
 
 
-# class Emails(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     verified = models.BooleanField(default=False)
-#     activate_code = models.IntegerField()
+class Emails(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    is_verified = models.BooleanField(default=False)
+    activate_code = models.IntegerField()
 
 
 # class Subscription(models.Model):
