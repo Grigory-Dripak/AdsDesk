@@ -23,3 +23,10 @@ class AdsForm(forms.ModelForm):
                   'title',
                   'content',
                   ]
+
+
+class CodeForm(forms.Form):
+    activate_code = forms.IntegerField(label='Проверочный код',
+                                       widget=forms.TextInput(
+                                           attrs={'class': 'form-control verify-code', 'type': 'text'}),
+                                       required=True)

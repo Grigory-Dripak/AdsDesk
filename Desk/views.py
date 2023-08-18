@@ -1,9 +1,12 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import render, redirect
+from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Ads
-from .forms import AdsForm
+from .models import Ads, Emails, Reply
+from .forms import AdsForm, CodeForm
 from django.urls import reverse_lazy
-
+from .signals import send_code
+from django.contrib.auth.models import Group
 
 class AdsList(ListView):
     model = Ads
@@ -14,8 +17,8 @@ class AdsList(ListView):
 
 
 # LoginRequiredMixin,
-class AdsDetail(DetailView):
-    # raise_exception = True
+class AdsDetail(PermissionRequiredMixin, DetailView):
+    raise_exception = True
     model = Ads
     # queryset = Ads.objects.all()
     template_name = 'ads_details.html'
@@ -23,10 +26,10 @@ class AdsDetail(DetailView):
 
 
 # PermissionRequiredMixin,
-class AdsCreate(CreateView):
+class AdsCreate(PermissionRequiredMixin, CreateView):
     form_class = AdsForm
     model = Ads
-    # permission_required = ('News.add_post',)
+    permission_required = ('Ads.add_post',)
     template_name = 'ads_edit.html'
     context_object_name = 'ads'
 
@@ -38,7 +41,7 @@ class AdsCreate(CreateView):
         ads = Ads(
             category=request.POST['category'],
             title=request.POST['title'],
-            # seller=self.request.user,
+            seller=self.request.user,
             content=request.POST['content']
         )
         ads.save()
@@ -50,3 +53,28 @@ class AdsDelete(DeleteView):
     # permission_required = ('News.delete_post',)
     template_name = 'ads_delete.html'
     success_url = reverse_lazy('ads_list')
+
+
+class VerifyEmail(View):
+    def get(self, request, *args, **kwargs):
+        if Emails.objects.filter(user_id=self.request.user.id, is_verified=False).exists():
+            form = CodeForm()
+            send_code(user_id=self.request.user.id)
+            return render(self.request, 'email_verify.html', {'form': form})
+        else:
+            return redirect(to='ads_list')
+
+    def post(self, request, *args, **kwargs):
+        input_code = int(self.request.POST['activate_code'])
+        instance = Emails.objects.get(user_id=self.request.user.id)
+        true_code = instance.activate_code
+        if input_code == true_code:
+            instance.is_verified = True
+            instance.save()
+            common_users = Group.objects.get(name="common_users")
+            common_users.user_set.add(self.request.user)
+            return redirect(to='ads_list')
+        else:
+            form = CodeForm()
+            message = 'Неверный код!'
+            return render(self.request, 'email_verify.html', {'form': form, 'message': message})

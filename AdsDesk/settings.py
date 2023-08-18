@@ -196,10 +196,10 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 #перенаправления после аунтификации
-LOGIN_REDIRECT_URL = "/ads" #'verify_email'
+LOGIN_REDIRECT_URL = "/ads/verify"
 #перенаправления после logout
 LOGOUT_REDIRECT_URL = "/ads"
 

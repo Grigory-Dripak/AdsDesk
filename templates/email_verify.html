@@ -1,0 +1,19 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Mails verify
+{% endblock title %}
+
+
+{% block content %}
+<form action="" method="post">
+  {% csrf_token %}
+  {% if message %}
+    {{ message }}
+  {% endif %}
+  {{ form.activate_code.label }}
+  {{ form.activate_code }}
+  <input type="submit" value="Save" />
+</form>
+
+{% endblock content %}
