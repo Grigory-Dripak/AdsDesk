@@ -141,7 +141,6 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = path.join(BASE_DIR, 'collected_static')
 
 #TinyMCE
-# TINYMCE_JS_URL = path.join(BASE_DIR, "static/tinymce/tinymce.min.js")
 TINYMCE_JS_ROOT = path.join(STATIC_ROOT, "tinymce")
 TINYMCE_COMPRESSOR = False
 TINYMCE_FILEBROWSER = True
@@ -152,8 +151,6 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = path.join(BASE_DIR, 'media')
 PROJECT_DIR = path.dirname(__file__)
-
-# TINYMCE_JS_ROOT = path.join(STATIC_ROOT, "tinymce")
 
 FILEBROWSER_DIRECTORY = ''
 DIRECTORY = ''
@@ -201,12 +198,8 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 #перенаправления после аунтификации
 LOGIN_REDIRECT_URL = "/ads/verify"
 #перенаправления после logout
-LOGOUT_REDIRECT_URL = "/ads"
+LOGOUT_REDIRECT_URL = "/accounts/login"
 
-# ACCOUNT_FORMS = {
-#     'login': 'Desk.forms.CustomLoginForm',
-#     'signup': 'Desk.forms.CustomRegisterForm',
-# }
 
 load_dotenv(find_dotenv())
 

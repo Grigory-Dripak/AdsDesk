@@ -1,12 +1,11 @@
 from django import forms
 from tinymce.widgets import TinyMCE
-from .models import Ads, Category
+from .models import Ads, Category, Reply
 
 
 def catchoice():
     cats = Category.objects.all().values('pk', 'name')
     choices = []
-
     for i in cats:
         choices.append((i['pk'], i['name']))
     return choices
@@ -30,3 +29,11 @@ class CodeForm(forms.Form):
                                        widget=forms.TextInput(
                                            attrs={'class': 'form-control verify-code', 'type': 'text'}),
                                        required=True)
+
+
+class ReplyForm(forms.ModelForm):
+    reply = forms.CharField(label='Текст отклика', widget=forms.Textarea(attrs={'rows': 5, 'cols': 60}))
+
+    class Meta:
+        model = Reply
+        fields = ['reply']

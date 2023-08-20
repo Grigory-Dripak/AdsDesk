@@ -11,8 +11,7 @@ from .models import Emails
 @receiver(post_save, sender=User)
 def to_verify_emails(instance, created, **kwargs):
     if created:
-        Emails.objects.create(user=instance, is_verified=False, activate_code=random.randrange(10000, 100000))
-        # send_code(instance)
+        Emails.objects.create(user=instance, activate_code=random.randrange(10000, 100000))
 
 
 def send_code(user_id):
