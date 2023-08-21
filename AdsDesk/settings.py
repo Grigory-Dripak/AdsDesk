@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
+    'django_filters',
 ]
 
 SITE_ID = 1
@@ -154,6 +155,8 @@ PROJECT_DIR = path.dirname(__file__)
 
 FILEBROWSER_DIRECTORY = ''
 DIRECTORY = ''
+
+GRAPPELLI_SWITCH_USER = True
 
 TINYMCE_DEFAULT_CONFIG = {
     "height": "700px",

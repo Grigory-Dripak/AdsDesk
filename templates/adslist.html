@@ -13,14 +13,8 @@
     <table>
         {% for ad in ads %}
         <tr>
-            <td colspan="2" align="left"> <em>
-            {% for cat in ad.category.all %}
-                {{cat}}
-            {% endfor %}
-            </em></td>
-        </tr>
-        <tr>
-            <td align="left"> <strong> {{ ad.time_creation|date:'d.m.Y' }} </strong></td>
+            <td align="left"> <strong> {{ ad.category }}: </strong></td>
+            <td align="left"> <em> {{ ad.time_creation|date:'d.m.Y' }} </em></td>
             <td align="left"><a href={% hrefcreate value=ad.pk %}> {{ ad.title }} </a></td>
         </tr>
         {% endfor %}

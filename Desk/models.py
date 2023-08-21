@@ -23,7 +23,7 @@ class Ads(models.Model):
     title = models.CharField(max_length=255)
     content = HTMLField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='cat_ads')
-    is_closed = models.BooleanField(default=False)
+    # is_closed = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         return reverse('ads_detail', args=[str(self.pk)])
@@ -35,6 +35,9 @@ class Reply(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     reply_to = models.ForeignKey(Ads, on_delete=models.CASCADE, related_name='ad_replies')
     time_creation = models.DateTimeField(auto_now_add=True)
+
+    def get_absolute_url(self):
+        return reverse('reply_update', args=[str(self.pk)])
 
 
 class Emails(models.Model):

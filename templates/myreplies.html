@@ -1,41 +1,43 @@
-<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
 {% load mytags %}
-{% load custom_filters %}
-<!-- Название у нас будет Product -->
+
+
 {% block title %}
-Post details
+Отклики на мои публикации
 {% endblock title %}
 
-<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
+
 {% block content %}
 <form action="" method="get">
-    {{ filterset.form.as_p }}
+    {{ filter.form.as_p }}
     <input type="submit" value="Найти" />
 </form>
 
-{% if posts_search %}
-<h1>{{posts_search|length}} POSTS:</h1>
+{% if filter.qs %}
+<h1>Количество найденных откликов: {{filter.qs|length}}</h1>
     <table>
-        {% for post in posts_search %}
         <tr>
-            <td colspan="2" align="left"> <em>
-            {% for cat in post.category.all %}
-                {{cat}}
-            {% endfor %}:
-            </em></td>
+            <td>Заголовок публикации</td>
+            <td>Дата создания отклика</td>
+            <td>Автор отклика</td>
+            <td>Текст отклика</td>
+            <td>Текущий статус</td>
+            <td>Действие</td>
         </tr>
+        {% for reply in filter.qs %}
         <tr>
-            <td align="left"> <strong> {{ post.time_creation|date:'d.m.Y' }} </strong></td>
-            <td align="left"><a href={%  hrefcreate value=post.pk %}> {{ post.title|censor }} </a></td>
-        </tr>
-        <tr>
-            <td colspan="2" align="left"> <em> {{ post.post|truncatechars:20 }} </em></td>
+            <td>{{ reply.reply_to.title}}</td>
+            <td>{{ reply.time_creation|date:'d.m.Y' }}</td>
+            <td>{{ reply.buyer }}</td>
+            <td>{{ reply.reply }}</td>
+            <td>Текущий статус: {{ reply.status }}</td>
+            <td>Текущий статус: {{ reply.status }}</td>
+<!--            <td align="left"><a href={%  hrefcreate value=post.pk %}> {{ reply.reply }} </a></td>-->
         </tr>
         {% endfor %}
     </table>
 {% else %}
-<h2>Статей и новостей нет!</h2>
+<h2>Откликов к вашим публикациям нет!</h2>
 {% endif %}
 
 {# Добавляем пагинацию на страницу #}

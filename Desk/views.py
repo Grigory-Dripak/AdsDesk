@@ -4,6 +4,7 @@ from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.edit import FormMixin
 
+from .filters import ReplyFilter
 from .models import Ads, Emails, Reply
 from .forms import AdsForm, CodeForm, ReplyForm
 from django.urls import reverse_lazy
@@ -17,6 +18,32 @@ class AdsList(ListView):
     template_name = 'adslist.html'
     context_object_name = 'ads'
     paginate_by = 10
+
+
+class MyReplies(LoginRequiredMixin, ListView):
+    def get(self, request):
+        replies = Reply.objects.filter(reply_to__seller=self.request.user)
+        reply_filter = ReplyFilter(request.GET, queryset=replies)
+        context = {
+            'filter': reply_filter,
+        }
+        return render(request, 'myreplies.html', context=context)
+
+    # template_name = 'myreplies.html'
+    # context_object_name = 'replies'
+    # queryset = Reply.objects.all().order_by('-time_creation')
+    # paginate_by = 5
+    #
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     self.filterset = ReplyFilter(self.request.GET, queryset)
+    #     return self.filterset.qs
+    #
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['filterset'] = self.filterset
+    #     return context
+
 
 
 class AdsDetail(LoginRequiredMixin, DetailView, FormMixin):
@@ -54,8 +81,13 @@ class AdsCreate(PermissionRequiredMixin, CreateView):
     form_class = AdsForm
     model = Ads
     permission_required = ('Desk.add_ads')
-    template_name = 'ads_edit.html'
+    template_name = 'obj_edit.html'
     context_object_name = 'ads'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_text'] = 'Создать публикацию'
+        return context
 
     def post(self, request, *args, **kwargs):
         ads = Ads(
@@ -66,6 +98,56 @@ class AdsCreate(PermissionRequiredMixin, CreateView):
         )
         ads.save()
         return redirect(to=ads.get_absolute_url())
+
+
+class AdsUpdate(LoginRequiredMixin, UpdateView):
+    raise_exception = True
+    model = Ads
+    form_class = AdsForm
+    template_name = 'obj_edit.html'
+    context_object_name = 'object'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_text'] = 'Редактирование публикации'
+        return context
+
+
+class AdsDelete(LoginRequiredMixin, DeleteView):
+    raise_exception = True
+    model = Ads
+    template_name = 'delete.html'
+    success_url = reverse_lazy('ads_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_text'] = 'Удаление публикации'
+        return context
+
+
+class ReplyUpdate(LoginRequiredMixin, UpdateView):
+    raise_exception = True
+    model = Reply
+    form_class = ReplyForm
+    context_object_name = 'object'
+    template_name = 'obj_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_text'] = 'Редактировать отклик'
+        return context
+
+
+class ReplyDelete(LoginRequiredMixin, DeleteView):
+    raise_exception = True
+    model = Reply
+    template_name = 'delete.html'
+    success_url = reverse_lazy('ads_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_text'] = 'Удаление отклика'
+        return context
 
 
 class VerifyEmail(View):
@@ -91,37 +173,3 @@ class VerifyEmail(View):
             form = CodeForm()
             message = 'Неверный код!'
             return render(self.request, 'email_verify.html', {'form': form, 'message': message})
-
-
-class ReplyUpdate(LoginRequiredMixin, UpdateView):
-    form_class = ReplyForm
-    model = Reply
-    template_name = 'reply_edit.html'
-
-
-class ReplyDelete(LoginRequiredMixin, DeleteView):
-    model = Reply
-    template_name = 'delete.html'
-    success_url = reverse_lazy('ads_list')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['object_text'] = 'отклика на публикацию'
-        return context
-
-
-class AdsUpdate(LoginRequiredMixin, UpdateView):
-    form_class = ReplyForm
-    model = Reply
-    template_name = 'reply_edit.html'
-
-
-class AdsDelete(LoginRequiredMixin, DeleteView):
-    model = Ads
-    template_name = 'delete.html'
-    success_url = reverse_lazy('ads_list')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['object_text'] = 'публикации'
-        return context

@@ -11,7 +11,8 @@ Ads details
 {% block content %}
 <h1><strong>{{ ads_details.title }}</strong></h1>
 <br>
-<h4 align="left"><em>{{ ads_details.time_creation|date:'d.m.Y' }} - by {{ ads_details.seller }}</em></h4>
+<h3 align="left"><em>{{ ads_details.category }}</em></h3>
+<h3 align="left"><em>{{ ads_details.time_creation|date:'d.m.Y' }} - by {{ ads_details.seller }}</em></h3>
 <hr>
 <p>{{ ads_details.content|safe }}</p>
 <hr>
@@ -21,13 +22,8 @@ Ads details
     <table>
         <tr>
             <td>
-                <form action="ads/{{ ads_details.pk }}/edit/" >
+                <form action="{{ ads_details.pk }}/edit/" >
                     <input type="submit" value="Редактировать" />
-                </form>
-            </td>
-            <td>
-                <form action="ads/{{ ads_details.pk }}/delete/" >
-                    <input type="submit" value="Удалить публикацию" />
                 </form>
             </td>
         </tr>
@@ -39,17 +35,11 @@ Ads details
     {% for reply in replies %}
         <tr>
             <td>{{ reply.time_creation|date:'d.m.Y G:i' }} </td>
-            <td>{{reply.buyer}} reply:</td>
-            <td align="left">{{reply.reply}}</td>
-            {% if reply.buyer_id == cur_user %}
+            <td> Отклик от {{reply.buyer}}</td>
+            {% if reply.buyer_id == cur_user or ads_details.seller_id == cur_user %}
             <td>
                 <form action="reply/{{ reply.pk }}/edit/" >
                     <input type="submit" value="Редактировать" />
-                </form>
-            </td>
-            <td>
-                <form action="reply/{{ reply.pk }}/delete/" >
-                    <input type="submit" value="Удалить публикацию" />
                 </form>
             </td>
             {% endif %}
@@ -71,7 +61,8 @@ Ads details
     {{ form.as_p }}
     <input type="submit" value="Отправить" />
 </form>
-
+{% elif cur_user != ads_details.seller_id and cur_user_reply %}
+    <h3>Ваш отклик к текущей публикации уже размещен</h3>
 {% endif %}
 
 {% endblock content %}

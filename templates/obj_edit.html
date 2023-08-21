@@ -1,0 +1,28 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+<h3>{{ object_text }}</h3>
+<br>
+{% if object_text == 'Создать публикацию' or object_text == 'Редактирование публикации' %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+        <input type="submit" value="Сохранить изменение" />
+    </form>
+    <br>
+    <form action="http://127.0.0.1:8000/ads/{{ object.pk }}/delete/" >
+        <input type="submit" value="Удалить публикацию" />
+    </form>
+{% else %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Сохранить изменение" />
+    </form>
+    <br>
+    <form action="http://127.0.0.1:8000/ads/reply/{{ object.pk }}/delete/" >
+        <input type="submit" value="Удалить публикацию" />
+    </form>
+{% endif %}
+{% endblock content %}
