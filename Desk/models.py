@@ -4,9 +4,9 @@ from tinymce.models import HTMLField
 from django.contrib.auth.models import User
 
 STATUS = [
-    ("N", 'new'),
-    ("A", 'accept'),
-    ("D", 'to delete'),
+    ("N", 'новый'),
+    ("A", 'принят'),
+    ("D", 'отклонен'),
 ]
 
 
@@ -23,7 +23,6 @@ class Ads(models.Model):
     title = models.CharField(max_length=255)
     content = HTMLField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='cat_ads')
-    # is_closed = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         return reverse('ads_detail', args=[str(self.pk)])

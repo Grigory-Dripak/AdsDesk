@@ -21,29 +21,20 @@ class AdsList(ListView):
 
 
 class MyReplies(LoginRequiredMixin, ListView):
-    def get(self, request):
-        replies = Reply.objects.filter(reply_to__seller=self.request.user)
-        reply_filter = ReplyFilter(request.GET, queryset=replies)
-        context = {
-            'filter': reply_filter,
-        }
-        return render(request, 'myreplies.html', context=context)
+    template_name = 'myreplies.html'
+    context_object_name = 'replies'
+    model = Reply
+    paginate_by = 5
 
-    # template_name = 'myreplies.html'
-    # context_object_name = 'replies'
-    # queryset = Reply.objects.all().order_by('-time_creation')
-    # paginate_by = 5
-    #
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     self.filterset = ReplyFilter(self.request.GET, queryset)
-    #     return self.filterset.qs
-    #
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['filterset'] = self.filterset
-    #     return context
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = ReplyFilter(self.request.GET, queryset.filter(reply_to__seller=self.request.user))
+        return self.filterset.qs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filterset'] = self.filterset
+        return context
 
 
 class AdsDetail(LoginRequiredMixin, DetailView, FormMixin):

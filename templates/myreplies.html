@@ -1,4 +1,5 @@
 {% extends 'flatpages/default.html' %}
+{% load custom_filters %}
 {% load mytags %}
 
 
@@ -9,30 +10,36 @@
 
 {% block content %}
 <form action="" method="get">
-    {{ filter.form.as_p }}
+    {{ filterset.form.as_p }}
     <input type="submit" value="Найти" />
 </form>
 
-{% if filter.qs %}
-<h1>Количество найденных откликов: {{filter.qs|length}}</h1>
+{% if replies %}
+<h2>Количество найденных откликов: {{replies|length}}</h2>
     <table>
         <tr>
-            <td>Заголовок публикации</td>
-            <td>Дата создания отклика</td>
-            <td>Автор отклика</td>
-            <td>Текст отклика</td>
-            <td>Текущий статус</td>
-            <td>Действие</td>
+            <td><strong>Заголовок публикации</strong></td>
+            <td><strong>Дата создания</strong></td>
+            <td><strong>Автор отклика</strong></td>
+            <td><strong>Текст</strong></td>
+            <td><strong>Текущий статус</strong></td>
+            <td><strong>Действие</strong></td>
         </tr>
-        {% for reply in filter.qs %}
+        {% for reply in replies %}
         <tr>
-            <td>{{ reply.reply_to.title}}</td>
-            <td>{{ reply.time_creation|date:'d.m.Y' }}</td>
-            <td>{{ reply.buyer }}</td>
-            <td>{{ reply.reply }}</td>
-            <td>Текущий статус: {{ reply.status }}</td>
-            <td>Текущий статус: {{ reply.status }}</td>
-<!--            <td align="left"><a href={%  hrefcreate value=post.pk %}> {{ reply.reply }} </a></td>-->
+            <td align="left">{{ reply.reply_to.title}}</td>
+            <td align="left">{{ reply.time_creation|date:'d.m.Y' }}</td>
+            <td align="left">{{ reply.buyer }}</td>
+            <td align="left">{{ reply.reply }}</td>
+            <td align="center"> {{ reply.status|statusname }}</td>
+            <td>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="status" value="{{ reply.status }}" />
+                        <button name="action" value="A">принять</button>
+                        <button name="action" value="D">отклонить</button>
+                    </form>
+            </td>
         </tr>
         {% endfor %}
     </table>
