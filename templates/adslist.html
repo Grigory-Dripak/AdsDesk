@@ -10,12 +10,12 @@
 {% block content %}
 {% if ads %}
 <h1>{{ads|length}} Объявления:</h1>
-    <table>
+    <table class="table">
         {% for ad in ads %}
         <tr>
             <td align="left"> <strong> {{ ad.category }}: </strong></td>
             <td align="left"> <em> {{ ad.time_creation|date:'d.m.Y' }} </em></td>
-            <td align="left"><a href={% hrefcreate value=ad.pk %}> {{ ad.title }} </a></td>
+            <td align="left"><a href={% hrefcreate href="" value=ad.pk %}> {{ ad.title }} </a></td>
         </tr>
         {% endfor %}
     </table>

@@ -9,15 +9,22 @@
 
 
 {% block content %}
+
+
 <form action="" method="get">
     {{ filterset.form.as_p }}
     <input type="submit" value="Найти" />
 </form>
 
-{% if replies %}
+{% if message %}
+    <h3>{{ message }}</h3>
+{% endif %}
+
+{% if replies and not message %}
 <h2>Количество найденных откликов: {{replies|length}}</h2>
-    <table>
+    <table class="table">
         <tr>
+            <td><strong>Категория публикации</strong></td>
             <td><strong>Заголовок публикации</strong></td>
             <td><strong>Дата создания</strong></td>
             <td><strong>Автор отклика</strong></td>
@@ -27,47 +34,29 @@
         </tr>
         {% for reply in replies %}
         <tr>
-            <td align="left">{{ reply.reply_to.title}}</td>
-            <td align="left">{{ reply.time_creation|date:'d.m.Y' }}</td>
-            <td align="left">{{ reply.buyer }}</td>
-            <td align="left">{{ reply.reply }}</td>
-            <td align="center"> {{ reply.status|statusname }}</td>
+            <td>{{ reply.reply_to.category.name}}</td>
+            <td>{{ reply.reply_to.title}}</td>
+            <td>{{ reply.time_creation|date:'d.m.Y' }}</td>
+            <td>{{ reply.buyer }}</td>
+            <td>{{ reply.reply }}</td>
+            <td> {{ reply.status|statusname }}</td>
             <td>
+                {% if reply.status == 'N' %}
                     <form method="post">
                         {% csrf_token %}
-                        <input type="hidden" name="status" value="{{ reply.status }}" />
+                        <input type="hidden" name="pk" value="{{ reply.pk }}" />
                         <button name="action" value="A">принять</button>
                         <button name="action" value="D">отклонить</button>
                     </form>
+                {% else %}
+                    Действий не требуется
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
     </table>
-{% else %}
+{% elif not message %}
 <h2>Откликов к вашим публикациям нет!</h2>
 {% endif %}
 
-{# Добавляем пагинацию на страницу #}
-
-   {# Информация о предыдущих страницах #}
-   {% if page_obj.has_previous %}
-       <a href="?{% url_replace page=1 %}">1</a>
-       {% if page_obj.previous_page_number != 1 %}
-           ...
-           <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
-       {% endif %}
-   {% endif %}
-
-   {# Информация о текущей странице #}
-   {{ page_obj.number }}
-
-   {# Информация о следующих страницах #}
-   {% if page_obj.has_next %}
-       <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
-       {% if paginator.num_pages != page_obj.next_page_number %}
-           ...
-           <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
-       {% endif %}
-   {% endif %}
-<hr>
 {% endblock content %}

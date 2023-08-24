@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 STATUS = [
     ("N", 'новый'),
     ("A", 'принят'),
-    ("D", 'отклонен'),
 ]
 
 

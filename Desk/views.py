@@ -24,7 +24,6 @@ class MyReplies(LoginRequiredMixin, ListView):
     template_name = 'myreplies.html'
     context_object_name = 'replies'
     model = Reply
-    paginate_by = 5
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -36,6 +35,22 @@ class MyReplies(LoginRequiredMixin, ListView):
         context['filterset'] = self.filterset
         return context
 
+    def post(self, request, *args, **kwargs):
+        status = self.request.POST.get('action')
+        t = self.request.POST.get('pk')
+        reply = Reply.objects.get(pk=t)
+        if status == 'A':
+            reply.status = status
+            reply.save()
+            message = 'Отклик принят'
+            #send_mail
+        elif status == 'D':
+            reply.delete()
+            message = 'Отклик отклонен'
+        else:
+            message = 'Действие не выполнено'
+        return render(self.request, 'myreplies.html', {'message': message})
+
 
 class AdsDetail(LoginRequiredMixin, DetailView, FormMixin):
     raise_exception = True
@@ -46,11 +61,11 @@ class AdsDetail(LoginRequiredMixin, DetailView, FormMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['replies'] = Reply.objects.filter(reply_to_id=self.kwargs['pk']).exclude(status='D')
-        context['cur_user_reply']= Reply.objects.filter(
+        context['replies'] = Reply.objects.filter(reply_to_id=self.kwargs['pk'])
+        context['cur_user_reply'] = Reply.objects.filter(
             reply_to_id=self.kwargs['pk'],
             buyer_id=self.request.user.pk
-            ).exclude(status='D').exists()
+            ).exists()
         context['cur_user'] = self.request.user.pk
         return context
 

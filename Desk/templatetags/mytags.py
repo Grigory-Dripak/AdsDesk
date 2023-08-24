@@ -1,11 +1,11 @@
 from django import template
-
+from AdsDesk.settings import SITE_URL
 register = template.Library()
 
 
 @register.simple_tag()
-def hrefcreate(href='http://127.0.0.1:8000/ads/', value=''):
-   return f'{href}{value}'
+def hrefcreate(href={SITE_URL}, upath='/ads/', value=''):
+   return f'{href}{upath}{value}'
 
 
 @register.simple_tag(takes_context=True)
