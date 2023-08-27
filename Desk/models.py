@@ -42,16 +42,3 @@ class Emails(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_verified = models.BooleanField(default=False)
     activate_code = models.IntegerField()
-
-
-# class Subscription(models.Model):
-#     user = models.ForeignKey(
-#         to=User,
-#         on_delete=models.CASCADE,
-#         related_name='subscriptions',
-#     )
-#     category = models.ForeignKey(
-#         to='Category',
-#         on_delete=models.CASCADE,
-#         related_name='subscriptions',
-#     )
