@@ -8,7 +8,7 @@ from .filters import ReplyFilter
 from .models import Ads, Emails, Reply
 from .forms import AdsForm, CodeForm, ReplyForm
 from django.urls import reverse_lazy
-from .signals import send_code
+from .mails import send_code, status_notification, reply_notification
 from django.contrib.auth.models import Group
 
 
@@ -37,13 +37,19 @@ class MyReplies(LoginRequiredMixin, ListView):
 
     def post(self, request, *args, **kwargs):
         status = self.request.POST.get('action')
-        t = self.request.POST.get('pk')
-        reply = Reply.objects.get(pk=t)
+        reply_id = self.request.POST.get('pk')
+        reply = Reply.objects.get(pk=reply_id)
+
+        status_notification(
+            user_id=reply.buyer_id,
+            ad_pk=reply.reply_to_id,
+            status=status
+        )
+
         if status == 'A':
             reply.status = status
             reply.save()
             message = 'Отклик принят'
-            #send_mail
         elif status == 'D':
             reply.delete()
             message = 'Отклик отклонен'
@@ -79,7 +85,12 @@ class AdsDetail(LoginRequiredMixin, DetailView, FormMixin):
             reply=self.request.POST['reply'],
         )
         reply.save()
-        # reply_info.delay(ads_pk)
+
+        reply_notification(
+            user_id=ads.seller_id,
+            author=user,
+            text=reply.reply
+        )
         return redirect(to=ads.get_absolute_url())
 
 

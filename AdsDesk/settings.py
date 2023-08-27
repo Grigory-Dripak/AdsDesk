@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
     'django_filters',
+    'django_apscheduler',
 ]
 
 SITE_ID = 1
@@ -201,8 +202,18 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 #перенаправления после аунтификации
 LOGIN_REDIRECT_URL = "/ads/verify"
 #перенаправления после logout
-LOGOUT_REDIRECT_URL = "/accounts/login"
+LOGOUT_REDIRECT_URL = "/accounts/login/"
 
+
+#CELERY-REDIS:
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+# CELERY_BROKER_URL = 'redis://default:mLh1snCpeqNjqXLqlMZuAj6PzyezLlJJ@redis-10432.c242.eu-west-1-2.ec2.cloud.redislabs.com:10432'
+# CELERY_RESULT_BACKEND = 'redis://default:mLh1snCpeqNjqXLqlMZuAj6PzyezLlJJ@redis-10432.c242.eu-west-1-2.ec2.cloud.redislabs.com:10432'
+# = 'redis-10432.c242.eu-west-1-2.ec2.cloud.redislabs.com:10432'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 load_dotenv(find_dotenv())
 
