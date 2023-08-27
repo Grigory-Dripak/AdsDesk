@@ -89,7 +89,7 @@ class AdsDetail(LoginRequiredMixin, DetailView, FormMixin):
         reply_notification(
             user_id=ads.seller_id,
             author=user,
-            text=reply.reply
+            text=self.request.POST['reply']
         )
         return redirect(to=ads.get_absolute_url())
 

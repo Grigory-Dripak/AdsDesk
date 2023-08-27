@@ -25,8 +25,8 @@ def send_code(user_id):
 
 def reply_notification(user_id, author, text):
     receiver = User.objects.get(id=user_id)
-    author = User.objects.get(id=author)
-    message = f'От {author.username} получен новый отклик к вашей публикации. \n Текст отклика: "{text}"'
+    author = User.objects.get(id=author).username
+    message = f'От {author} получен новый отклик к вашей публикации. \n Текст отклика: "{text}"'
 
     to_email = receiver.email
     subject = f'Отклик на ваше объявление'

@@ -208,9 +208,6 @@ LOGOUT_REDIRECT_URL = "/accounts/login/"
 #CELERY-REDIS:
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
-# CELERY_BROKER_URL = 'redis://default:mLh1snCpeqNjqXLqlMZuAj6PzyezLlJJ@redis-10432.c242.eu-west-1-2.ec2.cloud.redislabs.com:10432'
-# CELERY_RESULT_BACKEND = 'redis://default:mLh1snCpeqNjqXLqlMZuAj6PzyezLlJJ@redis-10432.c242.eu-west-1-2.ec2.cloud.redislabs.com:10432'
-# = 'redis-10432.c242.eu-west-1-2.ec2.cloud.redislabs.com:10432'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -218,8 +215,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 load_dotenv(find_dotenv())
 
 # Emails
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = getenv('EMAIL_HOST_USER')
