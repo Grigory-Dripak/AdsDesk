@@ -33,9 +33,9 @@
                                         <li><a class="dropdown-item" href="{% url 'ads_create' %}">Новое объявление</a></li>
                                         <li><a class="dropdown-item" href="{% url 'my_replies' %}">Отклики к моим публикациям</a></li>
                                     {% else %}
-                                        <li><a class="dropdown-item" href=href="{% url 'verify_email' %}>Подтверждение почты</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'verify_email' %}">Подтверждение почты</a></li>
                                     {% endif %}
-                                    <li><a class="dropdown-item" href="/accounts/logout" %}">Выйти</a></li>
+                                    <li><a class="dropdown-item" href="/accounts/logout">Выйти</a></li>
                                 {% else %}
                                     <li><a class="dropdown-item" href='/accounts/login'>Зайти</a></li>
                                 {% endif %}

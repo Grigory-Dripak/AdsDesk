@@ -7,7 +7,7 @@
 <body>
 <h1>Публикации за неделю:</h1>
 <ul>
-    {% for ad in ads %}
+    {% for ad in ads_posted %}
     <li>
         <a href="{{ link }}{{ ad.get_absolute_url }}">{{ ad.title }}</a>
     </li>

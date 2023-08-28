@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views.generic.edit import FormMixin
-
+from .tasks import send_weekly_ads
 from .filters import ReplyFilter
 from .models import Ads, Emails, Reply
 from .forms import AdsForm, CodeForm, ReplyForm
@@ -77,6 +77,8 @@ class AdsDetail(LoginRequiredMixin, DetailView, FormMixin):
 
     def post(self, request, *args, **kwargs):
         user = self.request.user.pk
+        if Emails.objects.filter(user=user, is_verified=False).exists():
+            return redirect(to='verify_email')
         ads_pk = self.kwargs['pk']
         ads = Ads.objects.get(pk=ads_pk)
         reply = Reply.objects.create(

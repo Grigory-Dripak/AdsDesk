@@ -23,13 +23,13 @@ def my_job():
     if ads_posted is not None:
         mails = Emails.objects.all().values_list('user__email', flat=True)
         subject = 'Публикации за неделю'
-        html_content = render_to_string('weekly_ads.html', {
+        html_content = render_to_string('mails/weekly_ads.html', {
             'posts': ads_posted,
-            'link': "http://127.0.0.1:8000/ads/"
+            'link': "http://127.0.0.1:8000/ads"
         })
 
         text_content = ("\n\n".join(
-            [f"{ads.title}\n Link:http://127.0.0.1:8000/{ads.get_absolute_url()}" for ads in ads_posted]
+            [f"{ads.title}\n Link:http://127.0.0.1:8000{ads.get_absolute_url()}" for ads in ads_posted]
         ))
 
         for email in mails:
